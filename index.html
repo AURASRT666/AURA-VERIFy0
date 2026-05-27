@@ -335,14 +335,16 @@
     const result = PARAMS.get('result');
     const err    = PARAMS.get('error');
 
-    if      (result === 'success')   runLoadingScreen(() => showResult('success'));
-    else if (result === 'banned_ip') runLoadingScreen(() => showResult('banned_ip'));
-    else if (result === 'banned_id') runLoadingScreen(() => showResult('banned_id'));
-    else if (result === 'expired')   runLoadingScreen(() => showResult('expired'));
-    else if (err || result === 'error') runLoadingScreen(() => showResult('error'));
-    else                             showScreen('screen-land');
+    // Only the success path shows a result card.
+    // Any error / banned / expired plays the animation, then quietly bounces back to Discord.
+    if (result === 'success') {
+      runLoadingScreen(() => showResult('success'));
+    } else if (result || err) {
+      runLoadingScreen(() => { window.location.href = DISCORD_INVITE; });
+    } else {
+      showScreen('screen-land');
+    }
   });
 </script>
 </body>
 </html>
- 
